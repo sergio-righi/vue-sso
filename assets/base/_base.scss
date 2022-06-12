@@ -1,0 +1,14 @@
+html,
+body {
+  height: 100%;
+  // background-color: #333333;
+}
+
+#main,
+#login,
+#__nuxt,
+#content,
+#__layout,
+#container {
+  height: inherit;
+}
