@@ -6,7 +6,7 @@ const UserSchema: Schema = new Schema(
     password: { type: String },
     email: { type: String },
     avatar: { type: String },
-    verified: { type: String },
+    verified: { type: Boolean },
     origin: { type: String },
     originId: { type: String }
   },

@@ -1,3 +1,5 @@
+import { TokenModel } from "@/models"
+import { AuthService, TokenService } from "@/services"
 import { FileUtil, MailUtil } from "@/utils"
 
 class MailService {
@@ -9,11 +11,26 @@ class MailService {
    */
 
   async verificationCode(options: any) {
-    const html = FileUtil.readAndReplace('verification_code.html', options.content);
-    return await this.send({
-      ...options.mail,
-      html
-    });
+    const { mail: { to: email } } = options
+    const { data } = await AuthService.find({ email }) // get user
+    if (data) {
+      let response = await TokenService.find({ userId: data?._id, code: { $exists: true } }) // find active token
+      if (!response.data) {
+        response = await TokenService.create({ userId: data?._id, code: null }) // create a token with code
+      }
+      if (response.data) {
+        options.content.code = response.data.code // append code to parse
+        const html = FileUtil.readAndReplace('verification_code.html', options.content)
+        return await this.send({
+          ...options.mail,
+          html
+        })
+      } else {
+        return { status: response.status }
+      }
+    } else {
+      return { status: 500 }
+    }
   }
 
   /**
@@ -23,11 +40,26 @@ class MailService {
    */
 
   async forgetPassword(options: any) {
-    const html = FileUtil.readAndReplace('forget_password.html', options.content);
-    return await this.send({
-      ...options.mail,
-      html
-    });
+    const { mail: { to: email } } = options
+    const { data } = await AuthService.find({ email }) // get user
+    if (data) {
+      let response = await TokenService.find({ userId: data?._id, number: { $exists: true } }) // find active token
+      if (!response.data) {
+        response = await TokenService.create({ userId: data?._id, number: null }) // create a token with number
+      }
+      if (response.data) {
+        options.content.href += `&token=${response.data.number}` // append the token to parse
+        const html = FileUtil.readAndReplace('forget_password.html', options.content)
+        return await this.send({
+          ...options.mail,
+          html
+        })
+      } else {
+        return { status: response.status }
+      }
+    } else {
+      return { status: 500 }
+    }
   }
 
   /**
@@ -38,14 +70,14 @@ class MailService {
 
   async send(options: any) {
     try {
-      const transporter = await MailUtil.createTransporter();
-      await transporter.sendMail(options);
-      transporter.close();
-      return 200;
+      const transporter = await MailUtil.createTransporter()
+      await transporter.sendMail(options)
+      transporter.close()
+      return { status: 200 }
     } catch (err) {
-      return 500;
+      return { status: 500 }
     }
-  };
+  }
 }
 
 export default new MailService()

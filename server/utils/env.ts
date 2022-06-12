@@ -1,5 +1,7 @@
+import dotenv from 'dotenv'
 import convict from 'convict';
 
+dotenv.config();
 export default convict({
   env: {
     default: 'dev',
@@ -14,7 +16,12 @@ export default convict({
     host: {
       default: 'http://localhost',
       env: 'HOST',
-    },
+    }
+  },
+  api: {
+    doc: 'Auth key for making requests',
+    default: '',
+    env: 'API_KEY',
   },
   mongoose: {
     doc: 'Mongoose connection string',
@@ -29,7 +36,7 @@ export default convict({
     }
   },
   cors: {
-    default: ['http://localhost:3000', 'http://localhost:20101'],
+    default: ['http://localhost:3000'],
     env: 'CORS_ORIGIN'
   },
   url: {
@@ -41,15 +48,19 @@ export default convict({
   mail: {
     gmail: {
       account: {
+        default: '',
         env: 'GMAIL_ACCOUNT'
       },
       clientID: {
+        default: '',
         env: 'GMAIL_CLIENT_ID',
       },
       clientSecret: {
+        default: '',
         env: 'GMAIL_SECRET',
       },
       refreshToken: {
+        default: '',
         env: 'GMAIL_REFRESH_TOKEN',
       }
     }
@@ -58,12 +69,12 @@ export default convict({
     github: {
       clientID: {
         doc: 'The Client ID from Github to use for authentication',
-        default: '8698eb3291588aee12ec',
+        default: '',
         env: 'GITHUB_CLIENT_ID',
       },
       clientSecret: {
         doc: 'The Client Secret from Github to use for authentication',
-        default: '8dfd92781bd3706de5b06782c653058a383ea6c1',
+        default: '',
         env: 'GITHUB_SECRET',
       },
       scope: {
@@ -73,12 +84,12 @@ export default convict({
     google: {
       clientID: {
         doc: 'The Client ID from Google to use for authentication',
-        default: '654077951362-a7hus77014evn88m24mitiq5o7f3gkg8.apps.googleusercontent.com',
+        default: '',
         env: 'GOOGLE_CLIENT_ID',
       },
       clientSecret: {
         doc: 'The Client Secret from Google to use for authentication',
-        default: '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',
+        default: '',
         env: 'GOOGLE_SECRET',
       },
       scope: {
@@ -113,4 +124,4 @@ export default convict({
       },
     },
   },
-}).validate();
+}).validate()

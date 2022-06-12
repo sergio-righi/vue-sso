@@ -5,8 +5,7 @@ const TokenSchema: Schema = new Schema(
     userId: { type: String, required: true },
     number: { type: String },
     code: { type: String },
-    done: { type: Date },
-    expires: { type: Date, required: true }
+    expires: { type: Date, default: new Date().setDate(new Date().getDate() + 1) }
   },
   { collection: "sso_tokens", timestamps: true }
 );

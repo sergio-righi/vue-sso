@@ -20,6 +20,8 @@ class AuthController {
 
       if (response) {
         this.generateTokensAndAuthenticateUser(res, String(response._id));
+      } else {
+        res.status(200).json(null)
       }
     } catch (error) {
       handleError(res, error);
@@ -38,6 +40,8 @@ class AuthController {
       if (!response) {
         const user = await UserModel.create(req.body);
         this.generateTokensAndAuthenticateUser(res, String(user._id));
+      } else {
+        res.status(200).json(null)
       }
     } catch (error) {
       handleError(res, error);
@@ -72,23 +76,8 @@ class AuthController {
   }
 
   async find(req: Request, res: Response) {
-    try {
-      const { email } = req.body
-      const response = await UserModel.findOne({ email, password: { $exists: true } }, { new: true });
-      res.status(200).json(response);
-    } catch (error) {
-      handleError(res, error);
-    }
-  }
-
-  async verified(req: Request, res: Response) {
-    try {
-      const { _id, ...query } = req.body;
-      const response = await UserModel.findByIdAndUpdate(_id, query, { new: true });
-      res.status(200).json(response);
-    } catch (error) {
-      handleError(res, error);
-    }
+    const response = await AuthService.find(req.body);
+    res.status(response.status).json(response.data);
   }
 }
 

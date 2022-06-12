@@ -8,10 +8,18 @@ import { ConfigUtil, HelperUtil } from '@/utils';
 
 class AuthService {
 
+  /**
+   * middleware used to authenticate the user
+   */
+
   requireAuth = passport.authenticate('jwt', {
     userProperty: 'currentUser',
     session: false,
   });
+
+  /**
+ * init the providers
+ */
 
   init() {
     const providersPath = join(__dirname, '..', 'providers');
@@ -20,6 +28,10 @@ class AuthService {
       import(join(providersPath, authFile));
     });
   };
+
+  /**
+ * get the configuration of the provider by name
+ */
 
   getConfigByProviderName(providerName: string) {
     return {
@@ -30,6 +42,10 @@ class AuthService {
     };
   };
 
+  /**
+ * process the return from the third party authentication provider
+ */
+
   processUserFromSSO(req: any, profile: any, origin: string, done: VerifiedCallback) {
 
     UserModel.findOneAndUpdate(
@@ -38,6 +54,7 @@ class AuthService {
         email: profile.email,
         name: profile.name,
         origin,
+        verified: true,
         originId: profile.id,
       },
       { upsert: true },
@@ -53,7 +70,22 @@ class AuthService {
 
   _getAuthCallbackUrl(providerName: string) {
     return `${ConfigUtil.get('http.host')}:${ConfigUtil.get('http.port')}/auth/${providerName}/callback`;
-  };
+  }
+
+  /**
+   * it runs a find function only considering local users
+   * @param query 
+   * @returns 
+   */
+
+  async find(query: any) {
+    try {
+      const response = await UserModel.findOne({ ...query, password: { $exists: true } }, { new: true });
+      return { status: 200, data: response };
+    } catch (error) {
+      return { status: 500 }
+    }
+  }
 }
 
 export default new AuthService();

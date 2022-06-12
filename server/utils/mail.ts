@@ -1,15 +1,23 @@
-import { default as ConfigUtil } from './env';
 import nodemailer from "nodemailer";
 import { OAuth2Client } from 'google-auth-library';
 
+import { default as ConfigUtil } from './env';
+
+const params = {
+  user: String(ConfigUtil.get('mail.gmail.account')),
+  clientId: String(ConfigUtil.get('mail.gmail.clientID')),
+  clientSecret: String(ConfigUtil.get('mail.gmail.clientSecret')),
+  refreshToken: String(ConfigUtil.get('mail.gmail.refreshToken')),
+}
+
 const oauth2Client = new OAuth2Client(
-  String(ConfigUtil.get('mail.gmail.clientID')),
-  String(ConfigUtil.get('mail.gmail.clientSecret')),
+  params.clientId,
+  params.clientSecret,
   "https://developers.google.com/oauthplayground"
 );
 
 oauth2Client.setCredentials({
-  refresh_token: String(ConfigUtil.get('mail.gmail.refreshToken'))
+  refresh_token: params.refreshToken
 });
 
 const createTransporter = async () => {
@@ -23,11 +31,11 @@ const createTransporter = async () => {
     service: "gmail",
     auth: {
       type: "OAuth2",
-      user: String(ConfigUtil.get('mail.gmail.account')),
+      user: params.user,
       accessToken,
-      clientId: String(ConfigUtil.get('mail.gmail.clientID')),
-      clientSecret: String(ConfigUtil.get('mail.gmail.clientSecret')),
-      refreshToken: String(ConfigUtil.get('mail.gmail.refreshToken'))
+      clientId: params.clientId,
+      clientSecret: params.clientSecret,
+      refreshToken: params.refreshToken
     }
   }
 

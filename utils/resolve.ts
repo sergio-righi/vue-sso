@@ -1,33 +1,44 @@
+import { Context } from '@nuxt/types'
 
-const controller = {
-  auth: {
-    home: '/',
-    login: '/login',
-    register: '/register',
-    password: '/forget-password',
-    authorization: '/authorization'
-  }
+const route = {
+  home: '/',
+  login: '/login',
+  register: '/register',
+  password: '/forget-password',
+  authorization: '/authorization'
 }
 
-const Resolve = (localePath: Function) => ({
+const Resolve = (context: any) => ({
 
-  // authentication
+  home: (callback: string) => {
+    return context.localePath({ path: route.home, query: callback })
+  },
 
-  home: (...args: any[]) => localePath({ path: controller.auth.home + args.join('/') }),
-  login: (...args: any[]) => localePath({ path: controller.auth.login + args.join('/') }),
-  register: (...args: any[]) => localePath({ path: controller.auth.register + args.join('/') }),
-  password: (...args: any[]) => localePath({ path: controller.auth.password + args.join('/') }),
-  authorization: (...args: any[]) => localePath({ path: controller.auth.authorization + args.join('/') }),
+  login: (email: string, callback: string) => {
+    return context.localePath({ path: route.login, query: { email, callback } })
+  },
 
-  image: {
+  register: (callback: string) => {
+    return context.localePath({ path: route.register, query: { callback } })
+  },
 
-    root: (name: string) => {
-      return `/${name}`
-    }
+  password: (callback: string) => {
+    return context.localePath({ path: route.password, query: { callback } })
+  },
+
+  authorization: (callback: string) => {
+    return context.localePath({ path: route.authorization, query: { callback } })
   }
+
+  // image: {
+
+  //   root: (name: string) => {
+  //     return `/${name}`
+  //   }
+  // }
 
 });
 
-export const initializeResolve = (localePath: Function) => ({
-  ...Resolve(localePath)
+export const initializeResolve = (context: Context) => ({
+  ...Resolve(context)
 });

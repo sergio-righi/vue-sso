@@ -1,57 +1,43 @@
-import { token as tk } from "@/utils"
+import { TokenModel } from '@/models'
 
 class TokenService {
+  private readonly $store: any
   private readonly $axios: any
 
   constructor(context: any) {
+    this.$store = context.store
     this.$axios = context.$axios
   }
 
-  async insertWithCode(token: any) {
-    token.code = tk.generateCode()
+  async insertWithCode(userId: string) {
+    const token = new TokenModel({ userId, code: null })
     const response = await this.$axios.post('/token/', token)
-    return response.data ?? null
-  }
-
-  async insertWithToken(token: any) {
-    token.number = tk.generateKey()
-    const response = await this.$axios.post('/token/', token)
-    return response.data ?? null
-  }
-
-  async findByUser(userId: string, code: boolean = false) {
-    const params = code ? { number: { $exists: false } } : { code: { $exists: false } }
-    const response = await this.$axios.get('/token/', { userId, ...params, done: { $exists: false }, expires: { $gte: new Date() } })
     return response.data ?? null
   }
 
   async findByToken(number: string) {
-    const response = await this.$axios.get('/token/', { number, done: { $exists: false }, expires: { $gte: new Date() } })
+    const response = await this.$axios.get('/token/', { params: { number } })
     return response.data ?? null
   }
 
-  async findByCode(userId: string, code: string) {
-    const response = await this.$axios.get('/token/', { userId, code, done: { $exists: false }, expires: { $gte: new Date() } })
-    return response.data ?? null
+  async grant(usedId: string, code: string) {
+    return this._processResponse(await this.$axios.patch('/token/grant/' + usedId, { code }))
   }
 
-  async update(document: any) {
-    const response = await this.$axios.put('/token/update/', document)
-    return response.data ?? null
+  async revoke(userId: string) {
+    return this._processResponse(await this.$axios.patch('/token/revoke/' + userId))
   }
 
-  async done(id: string) {
-    const response = await this.$axios.patch('/token/done/' + id)
-    return response.data ?? null
+  async reset(number: string, password: string) {
+    return await this.$axios.patch('/token/reset/' + number, { password })
   }
 
-  async undone(id: string) {
-    const response = await this.$axios.patch('/token/undone/' + id)
-    return response.data ?? null
-  }
-
-  async reset(id: string, query: string) {
-    return await this.$axios.patch('/token/reset/' + id, query)
+  _processResponse(response: any) {
+    if (response.data) {
+      this.$store.dispatch('setUser', response.data);
+      return response.data;
+    }
+    return null;
   }
 }
 

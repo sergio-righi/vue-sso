@@ -1,14 +1,16 @@
 import { Request, Response } from 'express'
 import { MailService } from "@/services";
 
-class MailsController {
-  async verificationCode(res: Response, req: Request) {
-    res.status(await MailService.verificationCode(req.body))
+class MailController {
+  async verificationCode(req: Request, res: Response) {
+    const response = await MailService.verificationCode(req.body)
+    res.status(response.status)
   }
 
-  async forgetPassword(res: Response, req: Request) {
-    res.status(await MailService.forgetPassword(req.body))
+  async forgetPassword(req: Request, res: Response) {
+    const response = await MailService.forgetPassword(req.body)
+    res.status(response.status)
   }
 }
 
-export default new MailsController();
+export default new MailController()

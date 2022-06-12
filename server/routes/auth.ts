@@ -14,7 +14,6 @@ router.post('/register', (req, res) => AuthController.register(req, res));
 router.get('/refresh-token', (req, res) => AuthController.refreshToken(req, res));
 router.get('/logout', JWTMiddleware, (req: Request, res: Response) => AuthController.logout(req, res));
 router.post('/login', async (req: Request, res: Response) => AuthController.login(req, res));
-router.patch('/verified', async (req: Request, res: Response) => AuthController.verified(req, res));
 
 // social-jwt login
 

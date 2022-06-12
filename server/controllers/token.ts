@@ -10,45 +10,31 @@ const handleError = (res: Response, _: Error) => {
 class TokenController {
 
   async create(req: Request, res: Response) {
-    try {
-      return await TokenModel.create(req.body)
-    } catch (err) {
-      handleError(res, err);
-    }
+    const response = await TokenService.create(req.body)
+    res.status(response.status).json(response.data);
   }
 
   async find(req: Request, res: Response) {
-    try {
-      return await TokenModel.findOne(req.params)
-    } catch (err) {
-      handleError(res, err);
-    }
+    const response = await TokenService.find(req.params);
+    res.status(response.status).json(response.data);
   }
 
-  async update(req: Request, res: Response) {
-    try {
-      const { _id, ...query } = req.body;
-      return await TokenModel.findByIdAndUpdate(_id, query, { new: true })
-    } catch (err) {
-      handleError(res, err);
-    }
-  }
-
-  async done(req: Request, res: Response) {
-    const { id } = req.params;
-    const response = await TokenService.access(id, true);
+  async grant(req: Request, res: Response) {
+    const { code } = req.body;
+    const { id: userId } = req.params;
+    const response = await TokenService.access(userId, true, code);
     res.status(response.status).json(response.data);
   };
 
-  async undone(req: Request, res: Response) {
-    const { id } = req.params;
-    const response = await TokenService.access(id, false);
+  async revoke(req: Request, res: Response) {
+    const { id: userId } = req.params;
+    const response = await TokenService.access(userId, false);
     res.status(response.status).json(response.data);
   };
 
   async reset(req: Request, res: Response) {
-    const { id } = req.params;
-    const response = await TokenService.reset(id, req.body);
+    const { id: number } = req.params;
+    const response = await TokenService.reset(number, req.body);
     res.status(response.status).json(response.data);
   };
 }

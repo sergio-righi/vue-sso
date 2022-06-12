@@ -3,13 +3,15 @@ import { initializeAxios } from '@/utils/api'
 const accessor: any = ({ $axios, store }: any) => {
   initializeAxios($axios)
 
-  // const authToken = $auth?.strategy.token.get();
+  // const authToken = store.getters.getToken;
 
-  // if (authToken) {
-  //   $axios.onRequest((config: any) => {
-  //     config.headers.common.Authorization = authToken
-  //   })
-  // }
+  $axios.onRequest((config: any) => {
+    config.headers.common.Authorization = store.getters.getToken
+  })
+
+  // $axios.onRequest((config: any) => {
+  //   config.headers.common.Authorization = "D2GZvPTl8c5GAQX8ZyvOlq72Jnukl5Tu"
+  // })
 
   // axios error handler
   $axios.onError((error: any) => {

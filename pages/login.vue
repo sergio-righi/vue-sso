@@ -4,7 +4,7 @@
     <form @submit.prevent="onSubmit">
       <gv-input :value="email" readonly :label="$t('label.email')">
         <template #trailing>
-          <gv-button :href="$resolve.home(urlParams)" sm>
+          <gv-button @onclick="redirectToHome" sm>
             <gv-icon value="swap-horizontal" size="24px" />
           </gv-button>
         </template>
@@ -19,15 +19,15 @@
         <gv-button submit primary stretch>
           {{ $t('action.sign_in') }}
         </gv-button>
-        <gv-button :href="$resolve.register(urlParams)" stretch>
+        <gv-button @onclick="redirectToRegister" stretch>
           {{ $t('action.sign_up') }}
         </gv-button>
       </gv-flexbox>
       <gv-space y sm>
         <gv-flexbox justify="center">
-          <gv-link class="footnote" :href="$resolve.password(urlParams)" muted>
+          <gv-button class="footnote" @onclick="onReset" inline>
             {{ $t('page.login.forget_password') }}
-          </gv-link>
+          </gv-button>
         </gv-flexbox>
       </gv-space>
     </form>
@@ -36,13 +36,14 @@
 
 <script>
 import { Feedback } from '@/components'
+import { eFeedback } from '@/utils/enum'
 
 export default {
   name: 'SignIn',
   components: {
     Feedback,
   },
-  middleware: ['validate', 'not-auth'],
+  middleware: ['not-auth', 'validate'],
   data() {
     return {
       password: null,
@@ -52,8 +53,8 @@ export default {
     email() {
       return this.$route.query.email
     },
-    urlParams() {
-      return `?callback=${this.$store.getters.getCallback}`
+    callback() {
+      return this.$store.getters.getCallback
     },
   },
   methods: {
@@ -64,13 +65,41 @@ export default {
           this.password
         )
         if (response) {
-          window.location = this.$store.getters.getCallback
+          if (response.verified) {
+            window.location.href = this.$store.getters.getCallback
+            this.$service.auth.callback(null)
+          } else {
+            this.redirectToAuthorization()
+          }
         } else {
           this.$service.auth.feedback(this.$t('message.login.wrong_password'))
         }
       } catch (err) {
         this.$service.auth.feedback(this.$t('message.feedback.error'))
       }
+    },
+    async onReset() {
+      try {
+        await this.$service.mail.forgetPassword(this.email)
+        this.$service.auth.feedback(
+          this.$t('message.feedback.mail_sent'),
+          eFeedback.success
+        )
+      } catch (err) {
+        this.$service.auth.feedback(this.$t('message.feedback.error'))
+      }
+    },
+    redirectToHome() {
+      this.$router.push(this.$resolve.home(this.callback))
+    },
+    redirectToRegister() {
+      this.$router.push(this.$resolve.register(this.callback))
+    },
+    redirectToPassword() {
+      this.$router.push(this.$resolve.password(this.callback))
+    },
+    redirectToAuthorization() {
+      this.$router.push(this.$resolve.authorization(this.callback))
     },
   },
 }

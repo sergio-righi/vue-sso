@@ -1,7 +1,24 @@
-import mongoose from "mongoose";
-import { TokenModel, UserModel } from "@/models";
+import mongoose from "mongoose"
+
+import { TokenUtil } from "@/utils"
+import { TokenModel, UserModel } from "@/models"
 
 class TokenService {
+
+  /**
+   * it searchs a token that is not expired
+   * @param params 
+   * @returns 
+   */
+
+  async find(params: any) {
+    try {
+      const response = await TokenModel.findOne({ ...params, expires: { $gte: new Date() } })
+      return { status: 200, data: response }
+    } catch (err) {
+      return { status: 500 }
+    }
+  }
 
   /**
    * insert a token checking if there is any other token
@@ -9,26 +26,25 @@ class TokenService {
    * @returns 
    */
 
-  async insert(document: any) {
-    let response = null;
-    const session = await mongoose.startSession();
-    session.startTransaction();
+  async create(document: any) {
+    let response = null
+    const session = await mongoose.startSession()
+    session.startTransaction()
     try {
-      const { userId } = document;
-      const tokens: any = await TokenModel.find({ userId, done: { $exists: false } });
+      const { code } = document
+      // null code means that the token must contain a code otherwise a number (token) is added
+      const param = code === null ? { code: TokenUtil.generateCode() } : { number: TokenUtil.generateNumber() }
 
-      tokens.forEach(async item => await this.done(item._id));
-      response = await TokenModel.create(document);
-
-      await session.commitTransaction();
-    } catch (error) {
-      await session.abortTransaction();
-      return null;
+      response = await TokenModel.create({ ...document, ...param })
+      await session.commitTransaction()
+    } catch (err) {
+      await session.abortTransaction()
+      return { status: 500 }
     } finally {
-      session.endSession();
+      session.endSession()
     }
 
-    return response;
+    return { status: 200, data: response }
   }
 
   /**
@@ -37,73 +53,85 @@ class TokenService {
    * @returns 
    */
 
-  async done(id: string) {
+  async setExpired(id: string) {
     try {
-      return await TokenModel.findByIdAndUpdate(id, { done: new Date() }, { new: true });
+      const response = await TokenModel.findByIdAndUpdate(id, { expires: new Date() }, { new: true })
+      return { status: 200, data: response }
     } catch (err) {
-      return null
+      return { status: 500 }
     }
   }
 
   /**
    * manage the access to the platform when the user is new or when the access is revoked
-   * @param id token id 
-   * @param state 
+   * @param userId user id 
+   * @param code code 
    * @returns 
    */
 
-  async access(id: string, state: boolean) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
+  async access(userId: string, state: boolean, code?: string) {
+    const session = await mongoose.startSession()
+    session.startTransaction()
     try {
-      const { data }: any = await this.done(id);
-      const response = await UserModel.findByIdAndUpdate(data?.userId, { verified: state }, { new: true });
-
-      if (response) {
-        await session.commitTransaction();
-        return response
+      const { data }: any = await this.find({ userId, code })
+      if (data) {
+        await this.setExpired(data?._id) // set the token expired 
+        const response = await UserModel.findByIdAndUpdate(userId, { verified: state }, { new: true }).select('-password')
+        if (response) {
+          await session.commitTransaction()
+          return { status: 200, data: response }
+        } else {
+          await session.abortTransaction()
+          return { status: 200, data: null }
+        }
       } else {
-        await session.abortTransaction();
-        return {}
+        await session.abortTransaction()
+        return { status: 200, data: null }
       }
 
-    } catch (error) {
-      await session.abortTransaction();
-      return null
+    } catch (err) {
+      await session.abortTransaction()
+      return { status: 500 }
     } finally {
-      session.endSession();
+      session.endSession()
     }
-  };
+  }
 
   /**
    * set the token used to reset password to done and update the user password
-   * @param id token id
-   * @param document new password
+   * @param number token
+   * @param password new password
    * @returns 
    */
 
-  async reset(id: string, document: any) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
+  async reset(number: string, password: any) {
+    const session = await mongoose.startSession()
+    session.startTransaction()
     try {
-      const { data }: any = await this.done(id)
-      const response = await UserModel.findByIdAndUpdate(data.userId, document, { new: true });
+      const { data }: any = await this.find({ number })
+      if (data) {
+        await this.setExpired(data?._id) // set the token expired
+        const response = await UserModel.findByIdAndUpdate(data?.userId, password, { new: true }).select('-password')
 
-      if (response) {
-        await session.commitTransaction();
-        return response
+        if (response) {
+          await session.commitTransaction()
+          return { status: 200, data: response }
+        } else {
+          await session.abortTransaction()
+          return { status: 200, data: null }
+        }
       } else {
-        await session.abortTransaction();
-        return {}
+        await session.abortTransaction()
+        return { status: 200, data: null }
       }
 
-    } catch (error) {
-      await session.abortTransaction();
-      return null
+    } catch (err) {
+      await session.abortTransaction()
+      return { status: 500 }
     } finally {
-      session.endSession();
+      session.endSession()
     }
-  };
+  }
 }
 
 export default new TokenService()

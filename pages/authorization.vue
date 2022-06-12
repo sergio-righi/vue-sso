@@ -1,7 +1,7 @@
 <template>
   <div class="login-content">
     <Feedback />
-    <form @submit.prevent="authorization">
+    <form @submit.prevent="onSubmit">
       <gv-row>
         <gv-col>
           <gv-verification-code
@@ -11,7 +11,7 @@
           />
         </gv-col>
         <gv-col>
-          <gv-button primary stretch>
+          <gv-button submit primary stretch>
             {{ $t('action.continue') }}
           </gv-button>
         </gv-col>
@@ -23,9 +23,9 @@
                 {{ $t('action.resend') }}
               </gv-button>
               {{ $t('linking_word.or') }}
-              <gv-link :href="$resolve.login()" muted>
+              <gv-button @onclick="logout" inline>
                 {{ $t('action.sign_out') }}
-              </gv-link>
+              </gv-button>
             </span>
           </gv-flexbox>
         </gv-col>
@@ -36,57 +36,68 @@
 
 <script>
 import { Feedback } from '@/components'
+import { eFeedback } from '@/utils/enum'
 
 export default {
   name: 'Authorization',
   components: {
     Feedback,
   },
-  middleware: ['validate', 'auth'],
+  middleware: ['auth', 'validate'],
   data() {
     return { code: null }
   },
+  computed: {
+    user() {
+      return this.$store.getters.getUser
+    },
+    callback() {
+      return this.$store.getters.getCallback
+    },
+  },
   methods: {
-    async authorization() {
+    async onSubmit() {
       try {
-        const token = await this.$service.token.findByCode(
-          this.$auth.user.id,
+        const response = await this.$service.token.grant(
+          this.user._id,
           this.code
         )
-        if (token) {
-          await this.$service.token.done(token._id)
-          await this.$service.auth.fetch()
-          this.$router.go(0)
+        if (response) {
+          window.location.href = this.callback
+          this.$service.auth.callback(null)
         } else {
           this.code = null
           this.$service.auth.feedback(
-            this.$t('message.authorization.not_match'),
-            true
+            this.$t('message.authorization.not_match')
           )
         }
       } catch (err) {
-        this.$service.auth.feedback(this.$t('message.feedback.error'), true)
+        this.$service.auth.feedback(this.$t('message.feedback.error'))
       }
     },
     async resendEmail() {
-      this.code = null
-      const token = await this.$service.token.findByUser(this.$auth.user.id)
-      if (token) {
-        this.$service.mail.verificationCode(token.code)
+      try {
+        this.code = null
+        await this.$service.mail.verificationCode(
+          this.user.name,
+          this.user.email
+        )
         this.$service.auth.feedback(
           this.$t('message.feedback.mail_sent'),
-          false
+          eFeedback.success
         )
-      } else {
-        this.$service.auth.feedback(
-          this.$t('message.authorization.not_found'),
-          true
-        )
+      } catch (err) {
+        this.$service.auth.feedback(this.$t('message.authorization.not_found'))
       }
+    },
+    async logout() {
+      await this.$service.auth.logout()
+      window.location.href = this.callback
+      this.$service.auth.callback(null)
     },
     verificationCallback(code) {
       this.code = code
-      this.authorization()
+      this.onSubmit()
     },
   },
 }

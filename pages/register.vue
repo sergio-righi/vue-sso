@@ -31,9 +31,9 @@
             <gv-flexbox align="center" justify="space-evenly">
               <span class="footnote">
                 {{ $t('page.register.has_account') }}
-                <gv-link :href="$resolve.home(urlParams)" muted>
+                <gv-button @onclick="redirectToHome" inline>
                   {{ $t('action.sign_in') }}
-                </gv-link>
+                </gv-button>
               </span>
             </gv-flexbox>
           </gv-space>
@@ -44,7 +44,6 @@
 </template>
 
 <script>
-import { TokenModel } from '@/models'
 import { Email, Feedback, Password } from '@/components'
 
 export default {
@@ -54,10 +53,12 @@ export default {
     Feedback,
     Password,
   },
-  middleware: ['validate', 'not-auth'],
+  middleware: ['not-auth', 'validate'],
   data() {
     return {
-      user: {},
+      user: {
+        verified: false,
+      },
       invalidPassword: false,
     }
   },
@@ -65,38 +66,21 @@ export default {
     hasError() {
       return this.invalidPassword
     },
-    urlParams() {
-      return `?${this.$route.fullPath.split('?')[1]}`
+    callback() {
+      return this.$store.getters.getCallback
     },
   },
   methods: {
     async onSubmit() {
       if (this.hasError) return
       try {
-        const hasAccount = await this.$service.auth.find(this.user.email)
-        if (!hasAccount) {
-          const response = await this.$service.auth.register(this.user)
-          if (response) {
-            const token = new TokenModel({ userId: response._id })
-            await this.$service.token.insertWithCode(token)
-            await this.$service.auth.login(
-              response.email,
-              response.password,
-              false
-            )
-            await this.$service.mail.verificationCode(token.code)
-            this.$router.push({
-              path: this.$resolve.authorization(),
-              query: { ...this.$route.query.callback },
-            })
-          } else {
-            this.$service.auth.feedback(this.$t('message.feedback.error'))
-          }
+        const response = await this.$service.auth.register(this.user)
+        if (response) {
+          this.$service.token.insertWithCode(response._id)
+          this.$service.mail.verificationCode(response.name, response.email)
+          this.redirectToLogin(response.email)
         } else {
-          this.$router.push({
-            path: this.$resolve.login(),
-            query: { email: this.user.email, ...this.$route.query },
-          })
+          this.redirectToLogin(this.user.email)
         }
       } catch (err) {
         this.$service.auth.feedback(this.$t('message.feedback.error'))
@@ -104,6 +88,12 @@ export default {
     },
     passwordValidation(error) {
       this.invalidPassword = error
+    },
+    redirectToHome() {
+      this.$router.push(this.$resolve.home(this.callback))
+    },
+    redirectToLogin(email) {
+      this.$router.push(this.$resolve.login(email, this.callback))
     },
   },
 }

@@ -6,14 +6,11 @@ class MailService {
 
   constructor(context: any) {
     this.i18n = context.i18n;
+    this.$store = context.store;
     this.$axios = context.$axios;
-    this.$store = context.$store;
   }
 
-  verificationCode(code: string) {
-    if (!code) return;
-
-    const { name, email } = this.$store.getters.getUser;
+  verificationCode(name: string, email: string) {
     const options = {
       mail: {
         from: 'contadesenvolvedor@gmail.com',
@@ -23,7 +20,6 @@ class MailService {
       content: {
         greeting: this.i18n.t('mail.verification_code.greeting', { name: name }),
         header: this.i18n.t('mail.verification_code.header'),
-        code,
         description: this.i18n.t('mail.verification_code.description'),
       },
     };
@@ -31,9 +27,7 @@ class MailService {
     this.$axios.post(`/mail/verification-code`, options);
   }
 
-  forgetPassword(email: string, token: string) {
-    if (!email || !token) return;
-
+  forgetPassword(email: string) {
     const callback = this.$store.getters.getCallback;
     const options = {
       mail: {
@@ -45,7 +39,7 @@ class MailService {
         header: this.i18n.t('mail.forget_password.header'),
         subheader: this.i18n.t('mail.forget_password.subheader'),
         button: this.i18n.t('mail.forget_password.button'),
-        href: `http://localhost:3000/forget-password?token=${token}&callback=${callback}`,
+        href: `http://localhost:3000/forget-password?callback=${callback}`,
         description: this.i18n.t('mail.forget_password.description'),
       },
     };

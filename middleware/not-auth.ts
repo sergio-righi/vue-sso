@@ -1,7 +1,10 @@
 
-export default ({ query, redirect, store }: any) => {
+export default ({ error, query, redirect, store }: any) => {
+  const hasCallback = query.callback;
   const isAuthenticated = store.getters.isAuthenticated
-  if (isAuthenticated) {
-    return redirect(query.redirect)
+  if (isAuthenticated && hasCallback) {
+    return redirect(query.callback)
+  } else {
+    return error({ statusCode: 400 })
   }
 }

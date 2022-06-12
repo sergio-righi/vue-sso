@@ -4,7 +4,7 @@
       <gv-input
         id="password"
         v-model="password"
-        v-validation.required
+        v-validation.required="{ minLength: 8 }"
         :label="$t('label.password')"
         :type="inputType"
       >
