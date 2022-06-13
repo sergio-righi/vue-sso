@@ -5,6 +5,6 @@ export default ({ error, query, redirect, store }: any) => {
   if (!isAuthenticated && hasCallback) {
     return redirect(query.callback)
   } else if (!isAuthenticated) {
-    return error({ statusCode: 400 })
+    error({ statusCode: 400 })
   }
 }

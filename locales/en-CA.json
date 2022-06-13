@@ -52,12 +52,23 @@
       "not_found": "There ain't no authorization pending for this user",
       "not_match": "The informed code does not match."
     },
+    "authentication": {
+      "ongoing": "Authenticating",
+      "error": "Something went wrong during the authentication process.",
+      "not_finished": "There haven't been found a response from the thrid party server.",
+      "no_callback": "The authentication process is done, however, there haven't been provided any redirect resource."
+    },
     "forget_password": {
       "expired": "The informed token is not valid or expired"
     },
     "login": {
       "not_exist": "There is no user with the provided email",
       "wrong_password": "The provided password does not match"
+    },
+    "logout": {
+      "ongoing": "Logging out",
+      "error": "Something went wrong during the logout process.",
+      "no_callback": "The logout process is done, however, there haven't been provided any redirect resource."
     },
     "feedback": {
       "error": "Something went wrong while processing your request",
@@ -66,6 +77,11 @@
     }
   },
   "page": {
+    "error": {
+      "400": "The resourse that was requested cannot be accessed due to the current credentials state.",
+      "404": "The page you requested was not found, it often happens due to mistypping but we might have moved this resouce somewhere else.",
+      "500": "An error has occurred while processing the request, please try again later."
+    },
     "forget_password": {
       "remember_it": "I've remember it! I'd like to go back."
     },

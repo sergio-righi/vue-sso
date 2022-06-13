@@ -50,12 +50,11 @@ class AuthController {
 
   async refreshToken(req: Request, res: Response) {
     try {
-      console.log(Object.entries(req.cookies))
-      const tokenEncrypted = req.cookies?.refresh_token;
+      // const tokenEncrypted = req.cookies.refresh_token;
+      const tokenEncrypted = String(req.query.payload);
       const userId = JWTUtil.parseTokenAndGetUserId(tokenEncrypted);
       this.generateTokensAndAuthenticateUser(res, String(userId));
     } catch (err) {
-      console.log(err);
       handleError(res, err);
     }
   }
@@ -63,16 +62,16 @@ class AuthController {
   async generateTokensAndAuthenticateUser(res: any, userId: string) {
     const user = await UserModel.findById(userId).select('-password');
     const { token: access_token, expiration: token_expiration } = await JWTUtil.generateAccessToken(userId);
-    const { token: refreshToken } = JWTUtil.generateRefreshToken(userId);
-    res.cookie('refresh_token', refreshToken, { httpOnly: true });
+    // const { token: refreshToken } = JWTUtil.generateRefreshToken(userId);
+    // res.cookie('refresh_token', refreshToken, { httpOnly: true });
     res.status(200).json({ access_token, token_expiration, user });
   }
 
   async generateUserTokenAndRedirect(req: any, res: any) {
-    const fronendUrl = ConfigUtil.get('url.frontend');
-    const successRedirect = `${fronendUrl}/authentication/redirect`;
     const { token } = JWTUtil.generateRefreshToken(req.currentUser?._id.toString());
-    res.cookie('refresh_token', token, { httpOnly: true });
+    const fronendUrl = ConfigUtil.get('url.frontend');
+    const successRedirect = `${fronendUrl}/authentication?token=${token}`;
+    // res.cookie('refresh_token', token, { httpOnly: true });
     res.redirect(successRedirect);
   }
 

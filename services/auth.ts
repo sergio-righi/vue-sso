@@ -29,8 +29,8 @@ class AuthService {
     return this._processResponse(await this.$axios.post('/auth/register', payload));
   }
 
-  async refresh() {
-    return this._processResponse(await this.$axios.get('/auth/refresh-token'));
+  async refresh(payload: any) {
+    return this._processResponse(await this.$axios.get('/auth/refresh-token', { params: { payload } }));
   }
 
   async fetch() {

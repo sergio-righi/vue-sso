@@ -1,6 +1,6 @@
 <template>
   <gv-button
-    href="http://localhost:4000/auth/google/"
+    :href="`http://localhost:4000/auth/github?callback=${callback}`"
     bg="red-600"
     color="white"
     stretch
@@ -13,5 +13,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
-export default class Google extends Vue {}
+export default class Google extends Vue {
+  @Prop({ type: String }) callback!: string
+}
 </script>

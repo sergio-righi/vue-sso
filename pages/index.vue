@@ -20,9 +20,9 @@
         <span>{{ $t('linking_word.or') }}</span>
       </div>
       <gv-space y md>
-        <Google />
+        <Google :callback="callback" />
         <gv-space y sm />
-        <GitHub />
+        <GitHub :callback="callback" />
       </gv-space>
     </form>
   </div>

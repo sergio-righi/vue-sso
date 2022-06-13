@@ -24,7 +24,9 @@
 <script>
 export default {
   created() {
-    this.$service.auth.callback(this.$route.query.callback ?? null)
+    const callback =
+      this.$route.query.callback || this.$store.getters.getCallback
+    this.$service.auth.callback(callback ?? null)
   },
   watch: {
     $route: {
