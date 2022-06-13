@@ -27,6 +27,7 @@ export default {
     '~/plugins/service',
     '~/plugins/vuex.client',
     '~/plugins/axios.client',
+    '~/plugins/router.client',
     '~/plugins/resolve.client',
     '~/plugins/grater-vue.client',
   ],

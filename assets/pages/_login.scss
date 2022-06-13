@@ -5,12 +5,11 @@
   width: inherit;
   height: inherit;
   align-items: center;
+  background-size: cover;
   justify-content: center;
-  background-color: var(--gv-accent);
-  // background-size: cover;
-  // background-position: center;
-  // background-repeat: no-repeat;
-  // background-image: url('/login-background-image.jpg');
+  background-attachment: fixed;
+  background-position: center;
+  background-image: url('/background.svg');
 
   .login-container {
     width: 100%;
@@ -25,7 +24,7 @@
     box-shadow: 1px 5px 8px var(--gv-color-overlay-dark);
 
     .login-header {
-      margin-bottom: $default-distance;
+      padding: 0 $default-distance * 0.75;
 
       .brand {
         margin: 0 auto;

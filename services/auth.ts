@@ -33,6 +33,10 @@ class AuthService {
     return this._processResponse(await this.$axios.get('/auth/refresh-token'));
   }
 
+  async fetch() {
+    this._processResponse(await this.$axios.get('/auth'));
+  }
+
   _processResponse(response: any) {
     if (response.data) {
       const { user, ...token } = response.data;

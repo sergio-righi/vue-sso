@@ -8,11 +8,12 @@ import compression from 'compression';
 import { ConfigUtil } from './utils';
 import { AuthRoute, MailRoute, TokenRoute } from "./routes";
 
+const cookieParser = require('cookie-parser')
 const Store = require('express-session').Store;
 const MongooseStore = require('mongoose-express-session')(Store);
 
 class App {
-  public express: express.Application;
+  public express: any;
 
   constructor() {
     this.express = express();
@@ -38,6 +39,8 @@ class App {
   }
 
   setConfiguration() {
+    this.express.use(express.json({ limit: "10mb" }))
+    this.express.use(cookieParser())
     this.express.use(cors({
       credentials: true,
       origin: ConfigUtil.get('cors')
@@ -49,9 +52,8 @@ class App {
       saveUninitialized: true,
       store: new MongooseStore({ mongoose }),
     }));
-    this.express.use(passport.session())
     this.express.use(compression())
-    this.express.use(express.json({ limit: "10mb" }))
+    this.express.use(passport.session())
     this.express.use(express.urlencoded({ extended: true }))
   }
 

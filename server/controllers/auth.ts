@@ -23,12 +23,12 @@ class AuthController {
       } else {
         res.status(200).json(null)
       }
-    } catch (error) {
-      handleError(res, error);
+    } catch (err) {
+      handleError(res, err);
     }
   }
 
-  logout(_: Request, res: Response) {
+  logout(_: Request, res: any) {
     res.cookie('refresh_token', '', { httpOnly: true });
     res.status(200).end();
   }
@@ -43,23 +43,24 @@ class AuthController {
       } else {
         res.status(200).json(null)
       }
-    } catch (error) {
-      handleError(res, error);
+    } catch (err) {
+      handleError(res, err);
     }
   }
 
   async refreshToken(req: Request, res: Response) {
-    console.log(req.cookies);
     try {
-      const tokenEncrypted = req.cookies.refresh_token;
-      const userId = await JWTUtil.parseTokenAndGetUserId(tokenEncrypted);
+      console.log(Object.entries(req.cookies))
+      const tokenEncrypted = req.cookies?.refresh_token;
+      const userId = JWTUtil.parseTokenAndGetUserId(tokenEncrypted);
       this.generateTokensAndAuthenticateUser(res, String(userId));
-    } catch (error) {
-      handleError(res, error);
+    } catch (err) {
+      console.log(err);
+      handleError(res, err);
     }
   }
 
-  async generateTokensAndAuthenticateUser(res: Response, userId: string) {
+  async generateTokensAndAuthenticateUser(res: any, userId: string) {
     const user = await UserModel.findById(userId).select('-password');
     const { token: access_token, expiration: token_expiration } = await JWTUtil.generateAccessToken(userId);
     const { token: refreshToken } = JWTUtil.generateRefreshToken(userId);
@@ -67,7 +68,7 @@ class AuthController {
     res.status(200).json({ access_token, token_expiration, user });
   }
 
-  async generateUserTokenAndRedirect(req: any, res: Response) {
+  async generateUserTokenAndRedirect(req: any, res: any) {
     const fronendUrl = ConfigUtil.get('url.frontend');
     const successRedirect = `${fronendUrl}/authentication/redirect`;
     const { token } = JWTUtil.generateRefreshToken(req.currentUser?._id.toString());

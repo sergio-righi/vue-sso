@@ -11,11 +11,11 @@ const route = {
 const Resolve = (context: any) => ({
 
   home: (callback: string) => {
-    return context.localePath({ path: route.home, query: callback })
+    return context.localePath({ path: route.home, query: { callback } })
   },
 
   login: (email: string, callback: string) => {
-    return context.localePath({ path: route.login, query: { email, callback } })
+    return context.localePath({ path: route.login, query: { email: email, callback: callback } })
   },
 
   register: (callback: string) => {

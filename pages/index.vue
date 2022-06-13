@@ -69,8 +69,7 @@ export default {
             /401/.test(err)
               ? 'message.feedback.not_exist'
               : 'message.feedback.error'
-          ),
-          true
+          )
         )
       }
     },

@@ -1,7 +1,7 @@
 <template>
   <gv-button
     href="http://localhost:4000/auth/github/"
-    bg="gray-800"
+    bg="black"
     color="white"
     stretch
   >

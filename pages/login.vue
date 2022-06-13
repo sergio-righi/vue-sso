@@ -14,6 +14,7 @@
         v-validation.required
         :label="$t('label.password')"
         type="password"
+        autofocus
       />
       <gv-flexbox>
         <gv-button submit primary stretch>

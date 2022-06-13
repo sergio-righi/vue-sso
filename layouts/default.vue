@@ -24,8 +24,14 @@
 <script>
 export default {
   created() {
-    this.$service.auth.feedback(null)
     this.$service.auth.callback(this.$route.query.callback ?? null)
+  },
+  watch: {
+    $route: {
+      handler: function (value) {
+        this.$service.auth.feedback(null)
+      },
+    },
   },
 }
 </script>
