@@ -1,40 +1,38 @@
-import { ConfigUtil } from "@/utils";
+import { ConfigUtil, JWTUtil } from '@/utils'
 
 export default (req: any, res: any, next: any) => {
   try {
-    const token = req.headers.authorization;
-    const secretKey = ConfigUtil.get('api');
-    if (token && token === secretKey) next();
-    else throw new Error("401")
+    const authorization = req.headers.authorization.split('&')
+
+    if (!authorization) {
+      const error: any = new Error('No parameters to authenticate.')
+      error.statusCode = 401
+      throw error
+    }
+
+    if (authorization[1]) {
+      let decodedToken: any
+      try {
+        decodedToken = JWTUtil.generateAccessToken(authorization[1])
+      } catch (err) {
+        const error: any = new Error('Authentication failed.')
+        error.statusCode = 500
+        throw error
+      }
+
+      if (!decodedToken) {
+        const error: any = new Error('Not authenticated.')
+        error.statusCode = 401
+        throw error
+      }
+    }
+
+    if (authorization[0]) {
+      const secretKey = ConfigUtil.get('api')
+      if (authorization[0] === secretKey) next()
+    }
   } catch (err) {
-    err === 401 ? res.status(401) : res.end();
+    console.log(err)
+    err === 401 ? res.status(401) : res.end()
   }
-};
-
-// export default (req: any, _: any, next: any) => {
-//   const authorization = req.headers.authorization;
-
-//   if (!authorization) {
-//     const error: any = new Error("Not authenticated.");
-//     error.statusCode = 401;
-//     throw error;
-//   }
-
-//   const token = authorization.split(" ")[1];
-
-//   let decodedToken: any;
-//   try {
-//     decodedToken = auth.verify(token, String(env.JWT_ACCESS));
-//   } catch (err: any) {
-//     err.statusCode = 500;
-//     throw err;
-//   }
-
-//   if (!decodedToken) {
-//     const error: any = new Error("Not authenticated.");
-//     error.statusCode = 401;
-//     throw error;
-//   }
-//   req.userId = decodedToken.userId;
-//   next();
-// };
+}

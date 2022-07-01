@@ -5,7 +5,6 @@ declare module 'vue/types/vue' {
     $t: any
     $tc: any
     $i18n: any
-    $router: any
     $resolve: any
     $service: any
   }

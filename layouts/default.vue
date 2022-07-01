@@ -30,7 +30,7 @@ export default {
   },
   watch: {
     $route: {
-      handler: function (value) {
+      handler: function () {
         this.$service.auth.feedback(null)
       },
     },

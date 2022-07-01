@@ -3,6 +3,10 @@ import { i18n } from './utils'
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
+  
+  publicRuntimeConfig: {
+    apiKey: process.env.API_KEY,
+  },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -50,7 +54,7 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     progress: false,
-    baseUrl: 'http://localhost:4000/',
+    baseUrl: process.env.BASE_URL || 'http://localhost:4000',
   },
 
   i18n: {

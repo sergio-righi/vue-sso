@@ -25,7 +25,7 @@ export default convict({
   },
   mongoose: {
     doc: 'Mongoose connection string',
-    default: 'mongodb://localhost:27017/sso',
+    default: 'mongodb://127.0.0.1:27017/sso',
     env: 'MONGODB_URI',
   },
   session: {
