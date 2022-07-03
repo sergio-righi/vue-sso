@@ -97,5 +97,22 @@
     "case": "one uppercase and one lowercase letters",
     "character": "one letter and one number",
     "special": "one special character, e.g., ! @ # ? * $ % &"
+  },
+  "validation": {
+      "required": "is required",
+      "alpha": "must be alphanumeric",
+      "maxLength": "max of {0} characters long",
+      "minLength": "min of {0} characters long",
+      "range": "between {0} and {1}",
+      "date": "invalid date",
+      "number": "must be a number",
+      "pattern": "is invalid",
+      "email": "invalid email",
+      "url": "invalid URL",
+      "match": "must match",
+      "group": {
+          "min": "at least {0} must be selected",
+          "max": "max of {0} selections"
+      }
   }
 }

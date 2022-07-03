@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { Feedback } from '@/components'
 import { eFeedback } from '@/utils/enum'
 import { Google, GitHub } from '@/components/social'

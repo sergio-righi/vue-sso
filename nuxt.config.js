@@ -6,6 +6,7 @@ export default {
   
   publicRuntimeConfig: {
     apiKey: process.env.API_KEY,
+    cookieKey: process.env.COOKIE_KEY,
   },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
@@ -28,7 +29,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '~/plugins/service',
+    '~/plugins/service.client',
     '~/plugins/vuex.client',
     '~/plugins/axios.client',
     '~/plugins/resolve.client',

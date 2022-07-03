@@ -23,7 +23,7 @@
                 {{ $t('action.resend') }}
               </gv-button>
               {{ $t('linking_word.or') }}
-              <gv-button @onclick="logout" inline>
+              <gv-button inline @onclick="logout">
                 {{ $t('action.sign_out') }}
               </gv-button>
             </span>

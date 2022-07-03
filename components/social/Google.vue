@@ -1,6 +1,6 @@
 <template>
   <gv-button
-    :href="`http://localhost:4000/auth/github?callback=${callback}`"
+    :href="`http://localhost:4000/auth/google?callback=${callback}`"
     bg="red-600"
     color="white"
     stretch

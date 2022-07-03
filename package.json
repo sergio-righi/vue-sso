@@ -14,7 +14,7 @@
     "cookieparser": "^0.1.0",
     "core-js": "^3.15.1",
     "crypto-js": "^4.1.1",
-    "grater-vue": "^0.4.0-alpha",
+    "grater-vue": "^0.4.2-alpha",
     "js-cookie": "^3.0.1",
     "nuxt": "^2.15.8",
     "nuxt-i18n": "^6.28.1",
