@@ -11,7 +11,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'sso',
+    title: 'The Lazy Company - Single Sign-On',
     htmlAttrs: {
       lang: 'en',
     },

@@ -2,7 +2,7 @@
   <div id="login">
     <div class="login-container">
       <div class="login-header">
-        <gv-image class="brand" src="logo_horizontal.png" />
+        <gv-image class="brand" src="lazy-company-logo.svg" />
       </div>
       <Nuxt />
       <div class="login-footer">

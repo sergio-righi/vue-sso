@@ -20,7 +20,7 @@
       <gv-input
         v-model="confirmation"
         v-validation.match="'#password'"
-        :label="$t('label.password')"
+        :label="$t('label.confirm')"
         type="password"
       />
     </gv-col>

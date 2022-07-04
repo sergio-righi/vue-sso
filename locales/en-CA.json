@@ -26,7 +26,8 @@
   "label": {
     "email": "Email",
     "name": "Name",
-    "password": "Password"
+    "password": "Password",
+    "confirm": "Confirm"
   },
   "linking_word": {
     "and": "and",
