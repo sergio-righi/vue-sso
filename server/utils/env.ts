@@ -36,7 +36,7 @@ export default convict({
     }
   },
   cors: {
-    default: ['http://localhost:3000'],
+    default: '*',
     env: 'CORS_ORIGIN'
   },
   url: {
