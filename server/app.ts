@@ -2,14 +2,14 @@ import cors from 'cors'
 import express from 'express'
 import mongoose from 'mongoose'
 import passport from 'passport'
-// import session from 'express-session'
+import session from 'express-session'
 import compression from 'compression'
 
 import { ConfigUtil } from './utils'
 import { AuthRoute, MailRoute, TokenRoute } from './routes'
 
-// const Store = require('express-session').Store
-// const MongooseStore = require('mongoose-express-session')(Store)
+const Store = require('express-session').Store
+const MongooseStore = require('mongoose-express-session')(Store)
 
 class App {
   public express: any
@@ -50,15 +50,15 @@ class App {
         origin: ConfigUtil.get('cors'),
       })
     )
-    // this.express.use(
-    //   session({
-    //     secret: ConfigUtil.get('session.express'),
-    //     resave: false,
-    //     rolling: false,
-    //     saveUninitialized: true,
-    //     store: new MongooseStore({ mongoose }),
-    //   })
-    // )
+    this.express.use(
+      session({
+        secret: ConfigUtil.get('session.express'),
+        resave: false,
+        rolling: false,
+        saveUninitialized: true,
+        store: new MongooseStore({ mongoose }),
+      })
+    )
     this.express.use(compression())
     this.express.use(passport.session())
     this.express.use(express.urlencoded({ extended: true }))
