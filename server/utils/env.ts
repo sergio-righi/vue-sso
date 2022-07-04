@@ -31,7 +31,7 @@ export default convict({
   session: {
     express: {
       doc: 'The Secret is used on session-express',
-      default: '53058a383ea6c18dfd92781bd3706de5b06782c6',
+      default: '',
       env: 'SESSION_EXPRESS'
     }
   },
@@ -99,7 +99,7 @@ export default convict({
     token: {
       secret: {
         doc: 'The signing key for the JWT',
-        default: '09f26e402586e2faa8da4c98a35f1b20d6b033c609',
+        default: '',
         env: 'JWT_SECRET',
       },
       issuer: {
