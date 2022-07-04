@@ -5,7 +5,6 @@
   "main": "index.ts",
   "scripts": {
     "dev": "ts-node index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --optimize_for_size --max-old-space-size=4096 -- node_modules/ts-node/dist/bin -P tsconfig.json index.ts"
   },
   "author": "Sergio Righi",
