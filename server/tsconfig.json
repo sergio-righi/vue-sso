@@ -6,7 +6,15 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+    "types": [
+      "@types/node",
+      "@types/cors",
+      "@types/express",
+      "@types/mongoose",
+      "@types/jsonwebtoken",
+      "@types/nodemailer"
+    ]
   },
   "exclude": [
     "node_modules",
