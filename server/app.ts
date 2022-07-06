@@ -8,9 +8,6 @@ import compression from 'compression'
 import { ConfigUtil } from './utils'
 import { AuthRoute, MailRoute, TokenRoute } from './routes'
 
-const Store = require('express-session').Store
-const MongooseStore = require('mongoose-express-session')(Store)
-
 class App {
   public express: any
 
@@ -36,20 +33,28 @@ class App {
 
   async setDatabase() {
     const connectionString = ConfigUtil.get('mongoose')
+    await mongoose.connect(connectionString)
 
-    try {
-      await mongoose.connect(connectionString)
+    const databaseConnection = mongoose.connection
+    databaseConnection.on(
+      'error',
+      console.error.bind(console, 'MongoDB Connection error')
+    )
 
-      const databaseConnection = mongoose.connection
-      console.log('connected to database')
-      databaseConnection.on(
-        'error',
-        console.error.bind(console, 'MongoDB Connection error')
-      )
-    } catch (error) {
-      console.log(error)
-      process.exit(1)
-    }
+    const MongooseStore = require('mongoose-express-session')()
+    const mongooseStore = new MongooseStore({
+      mongoose: mongoose,
+      store: session.Store,
+    })
+    this.express.use(
+      session({
+        secret: ConfigUtil.get('session.express'),
+        resave: false,
+        rolling: false,
+        saveUninitialized: true,
+        store: mongooseStore,
+      })
+    )
   }
 
   setConfiguration() {
@@ -60,16 +65,15 @@ class App {
         origin: ConfigUtil.get('cors'),
       })
     )
-    console.log(mongoose)
-    this.express.use(
-      session({
-        secret: ConfigUtil.get('session.express'),
-        resave: false,
-        rolling: false,
-        saveUninitialized: true,
-        store: new MongooseStore({ mongoose }),
-      })
-    )
+    // this.express.use(
+    //   session({
+    //     secret: ConfigUtil.get('session.express'),
+    //     resave: false,
+    //     rolling: false,
+    //     saveUninitialized: true,
+    //     store: new MongooseStore({ mongoose }),
+    //   })
+    // )
     this.express.use(compression())
     this.express.use(passport.session())
     this.express.use(express.urlencoded({ extended: true }))
