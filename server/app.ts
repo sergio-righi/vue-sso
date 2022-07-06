@@ -36,12 +36,20 @@ class App {
 
   async setDatabase() {
     const connectionString = ConfigUtil.get('mongoose')
-    await mongoose.connect(connectionString)
-    const databaseConnection = mongoose.connection
-    databaseConnection.on(
-      'error',
-      console.error.bind(console, 'MongoDB Connection error')
-    )
+
+    try {
+      await mongoose.connect(connectionString)
+
+      const databaseConnection = mongoose.connection
+      console.log('connected to database')
+      databaseConnection.on(
+        'error',
+        console.error.bind(console, 'MongoDB Connection error')
+      )
+    } catch (error) {
+      console.log(error)
+      process.exit(1)
+    }
   }
 
   setConfiguration() {
@@ -52,6 +60,7 @@ class App {
         origin: ConfigUtil.get('cors'),
       })
     )
+    console.log(mongoose)
     this.express.use(
       session({
         secret: ConfigUtil.get('session.express'),
