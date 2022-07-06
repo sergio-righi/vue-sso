@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "compression": "^1.7.4",
+    "connect-mongo": "^4.6.0",
     "convict": "^6.2.3",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -21,7 +22,6 @@
     "google-auth-library": "^8.0.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.6",
-    "mongoose-express-session": "^0.0.5",
     "nodemailer": "^6.7.5",
     "passport": "^0.6.0",
     "passport-auth0": "^1.4.2",
