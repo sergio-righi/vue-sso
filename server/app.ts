@@ -36,7 +36,7 @@ class App {
 
   async setDatabase() {
     const connectionString = ConfigUtil.get('mongoose')
-    mongoose.connect(connectionString)
+    await mongoose.connect(connectionString)
     const databaseConnection = mongoose.connection
     databaseConnection.on(
       'error',
