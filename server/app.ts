@@ -17,11 +17,12 @@ class App {
   constructor() {
     this.express = express()
 
-    this.setDatabase()
-    this.setConfiguration()
-    this.setRoutes()
+    this.setDatabase().then(() => {
+      this.setConfiguration()
+      this.setRoutes()
 
-    this.getMemoryUsage()
+      this.getMemoryUsage()
+    })
   }
 
   getMemoryUsage() {
@@ -33,8 +34,9 @@ class App {
     }
   }
 
-  setDatabase() {
-    mongoose.connect(ConfigUtil.get('mongoose'))
+  async setDatabase() {
+    const connectionString = ConfigUtil.get('mongoose')
+    mongoose.connect(connectionString)
     const databaseConnection = mongoose.connection
     databaseConnection.on(
       'error',
