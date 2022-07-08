@@ -19,7 +19,7 @@
     <gv-col sm="6">
       <gv-input
         v-model="confirmation"
-        v-validation.match="'#password'"
+        v-validation.required="{ match: '#password' }"
         :label="$t('label.confirm')"
         type="password"
       />

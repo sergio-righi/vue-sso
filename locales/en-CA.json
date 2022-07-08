@@ -101,6 +101,7 @@
   },
   "validation": {
       "required": "is required",
+      "duplicate": "already exists",
       "alpha": "must be alphanumeric",
       "maxLength": "max of {0} characters long",
       "minLength": "min of {0} characters long",
