@@ -1,7 +1,7 @@
-export { default as ConfigUtil } from "./env";
-export { default as CryptoUtil } from "./crypto";
-export { default as FileUtil } from './file';
-export { default as JWTUtil } from "./jwt";
-export { default as HelperUtil } from './helper';
-export { default as MailUtil } from './mail';
-export { default as TokenUtil } from './token';
+export { default as env } from "./env";
+export { default as crypto } from "./crypto";
+export { default as file } from './file';
+export { default as jwt } from "./jwt";
+export { default as helper } from './helper';
+export { default as mail } from './mail';
+export { default as token } from './token';

@@ -2,7 +2,7 @@
   <div class="login-content">
     <gv-flexbox flex align="center" justify="center">
       <gv-progress-circle
-        v-if="processing"
+        v-if="isProcessing"
         color="primary"
         indeterminate
         size="40"
@@ -20,7 +20,7 @@ export default {
   middleware: ['not-auth'],
   data() {
     return {
-      processing: true,
+      isProcessing: true,
       message: this.$t('message.authentication.ongoing'),
     }
   },
@@ -34,15 +34,15 @@ export default {
           this.$service.auth.callback(null)
           window.location.href = callback
         } else {
-          this.processing = false
+          this.isProcessing = false
           this.message = this.$t('message.authentication.no_callback')
         }
       } else {
-        this.processing = false
+        this.isProcessing = false
         this.message = this.$t('message.authentication.not_finished')
       }
     } catch (err) {
-      this.processing = false
+      this.isProcessing = false
       this.message = this.$t('message.authentication.error')
     }
   },

@@ -28,9 +28,7 @@
     },
     "types": [
       "@nuxt/types",
-      "@types/node",
-      "@types/crypto-js",
-      "@nuxtjs/auth-next"
+      "@types/node"
     ]
   },
   "include": [

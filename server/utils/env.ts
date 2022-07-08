@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
-import convict from 'convict';
+import convict from 'convict'
 
-dotenv.config();
+dotenv.config()
 export default convict({
   env: {
     default: 'dev',
@@ -16,7 +16,7 @@ export default convict({
     host: {
       default: 'http://localhost',
       env: 'HOST',
-    }
+    },
   },
   api: {
     doc: 'Auth key for making requests',
@@ -32,24 +32,24 @@ export default convict({
     express: {
       doc: 'The Secret is used on session-express',
       default: '',
-      env: 'SESSION_EXPRESS'
-    }
+      env: 'SESSION_EXPRESS',
+    },
   },
   cors: {
     default: '*',
-    env: 'CORS_ORIGIN'
+    env: 'CORS_ORIGIN',
   },
   url: {
     frontend: {
       default: 'http://localhost:3000',
-      env: 'FRONTEND_URL'
-    }
+      env: 'FRONTEND_URL',
+    },
   },
   mail: {
     gmail: {
       account: {
         default: '',
-        env: 'GMAIL_ACCOUNT'
+        env: 'GMAIL_ACCOUNT',
       },
       clientID: {
         default: '',
@@ -62,8 +62,20 @@ export default convict({
       refreshToken: {
         default: '',
         env: 'GMAIL_REFRESH_TOKEN',
-      }
-    }
+      },
+    },
+  },
+  authorization: {
+    secret: {
+      doc: 'The signing key for the AUTH',
+      default: '',
+      env: 'AUTH_SECRET',
+    },
+    iv: {
+      doc: 'The signing iv for the AUTH',
+      default: '',
+      env: 'AUTH_IV',
+    },
   },
   authentication: {
     github: {
@@ -97,11 +109,6 @@ export default convict({
       },
     },
     token: {
-      secret: {
-        doc: 'The signing key for the JWT',
-        default: '',
-        env: 'JWT_SECRET',
-      },
       issuer: {
         doc: 'The issuer for the JWT',
         default: '',

@@ -6,7 +6,7 @@ import session from 'express-session'
 import compression from 'compression'
 import MongoStore from 'connect-mongo'
 
-import { ConfigUtil } from './utils'
+import { env } from './utils'
 import { AuthRoute, MailRoute, TokenRoute } from './routes'
 
 class App {
@@ -33,7 +33,7 @@ class App {
   }
 
   async setDatabase() {
-    await mongoose.connect(ConfigUtil.get('mongoose'))
+    await mongoose.connect(env.get('mongoose'))
     const databaseConnection = mongoose.connection
     databaseConnection.on(
       'error',
@@ -46,16 +46,16 @@ class App {
     this.express.use(
       cors({
         credentials: true,
-        origin: ConfigUtil.get('cors'),
+        origin: env.get('cors'),
       })
     )
     this.express.use(
       session({
-        secret: ConfigUtil.get('session.express'),
+        secret: env.get('session.express'),
         resave: false,
         rolling: false,
         saveUninitialized: true,
-        store: MongoStore.create({ mongoUrl: ConfigUtil.get('mongoose') }),
+        store: MongoStore.create({ mongoUrl: env.get('mongoose') }),
       })
     )
     this.express.use(compression())

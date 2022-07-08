@@ -1,6 +1,6 @@
 import { TokenModel } from "@/models"
 import { AuthService, TokenService } from "@/services"
-import { FileUtil, MailUtil } from "@/utils"
+import { file, mail } from "@/utils"
 
 class MailService {
 
@@ -20,7 +20,7 @@ class MailService {
       }
       if (response.data) {
         options.content.code = response.data.code // append code to parse
-        const html = FileUtil.readAndReplace('verification_code.html', options.content)
+        const html = file.readAndReplace('verification_code.html', options.content)
         return await this.send({
           ...options.mail,
           html
@@ -49,7 +49,7 @@ class MailService {
       }
       if (response.data) {
         options.content.href += `&token=${response.data.number}` // append the token to parse
-        const html = FileUtil.readAndReplace('forget_password.html', options.content)
+        const html = file.readAndReplace('forget_password.html', options.content)
         return await this.send({
           ...options.mail,
           html
@@ -70,7 +70,7 @@ class MailService {
 
   async send(options: any) {
     try {
-      const transporter = await MailUtil.createTransporter()
+      const transporter = await mail.createTransporter()
       await transporter.sendMail(options)
       transporter.close()
       return { status: 200 }

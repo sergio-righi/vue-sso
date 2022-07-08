@@ -29,7 +29,6 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { crypto } from '@/utils'
 
 const Props = Vue.extend({
   props: {
@@ -75,7 +74,7 @@ export default class Password extends Props {
 
   @Watch('password')
   onPasswordChanged(value: string) {
-    this.$emit('input', crypto.encrypt(value))
+    this.$emit('input', value)
   }
 }
 </script>

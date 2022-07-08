@@ -13,7 +13,6 @@
     "@nuxtjs/axios": "^5.13.6",
     "cookieparser": "^0.1.0",
     "core-js": "^3.15.1",
-    "crypto-js": "^4.1.1",
     "grater-vue": "^0.4.2-alpha",
     "js-cookie": "^3.0.1",
     "nuxt": "^2.15.8",
@@ -26,7 +25,6 @@
   "devDependencies": {
     "@nuxt/types": "^2.14.12",
     "@nuxt/typescript-build": "^2.1.0",
-    "@types/crypto-js": "^4.1.1",
     "@types/js-cookie": "^3.0.2",
     "eslint-config-prettier": "^8.3.0",
     "node-sass": "^5.0.0",

@@ -17,10 +17,14 @@
         autofocus
       />
       <gv-flexbox>
-        <gv-button submit primary stretch>
+        <gv-button submit primary stretch :process="isProcessing">
           {{ $t('action.sign_in') }}
         </gv-button>
-        <gv-button @onclick="redirectToRegister" stretch>
+        <gv-button
+          @onclick="redirectToRegister"
+          stretch
+          :disabled="isProcessing"
+        >
           {{ $t('action.sign_up') }}
         </gv-button>
       </gv-flexbox>
@@ -48,6 +52,7 @@ export default {
   data() {
     return {
       password: null,
+      isProcessing: false,
     }
   },
   computed: {
@@ -60,6 +65,7 @@ export default {
   },
   methods: {
     async onSubmit() {
+      this.isProcessing = true
       try {
         const response = await this.$service.auth.login(
           this.email,
@@ -73,9 +79,11 @@ export default {
             this.redirectToAuthorization()
           }
         } else {
+          this.isProcessing = false
           this.$service.auth.feedback(this.$t('message.login.wrong_password'))
         }
       } catch (err) {
+        this.isProcessing = false
         this.$service.auth.feedback(this.$t('message.feedback.error'))
       }
     },

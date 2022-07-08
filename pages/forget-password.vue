@@ -13,7 +13,13 @@
           </gv-list>
         </gv-col>
         <gv-col>
-          <gv-button submit primary stretch :disabled="hasError">
+          <gv-button
+            submit
+            primary
+            stretch
+            :disabled="hasError"
+            :process="isProcessing"
+          >
             {{ $t('action.send') }}
           </gv-button>
         </gv-col>
@@ -47,6 +53,7 @@ export default {
     return {
       email: null,
       password: null,
+      isProcessing: false,
       invalidPassword: false,
     }
   },
@@ -81,6 +88,7 @@ export default {
   },
   methods: {
     async onSubmit() {
+      this.isProcessing = true
       try {
         if (this.hasError) return
         const response = await this.$service.token.reset(
@@ -92,11 +100,13 @@ export default {
           window.location.href = this.$store.getters.getCallback
           this.$service.auth.callback(null)
         } else {
+          this.isProcessing = false
           this.$service.auth.feedback(
             this.$t('message.forget_password.expired')
           )
         }
       } catch (err) {
+        this.isProcessing = false
         this.$service.auth.feedback(this.$t('message.feedback.error'))
       }
     },

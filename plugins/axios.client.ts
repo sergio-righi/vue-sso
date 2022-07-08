@@ -1,10 +1,12 @@
 import { initializeAxios } from '@/utils/api'
 
-const accessor: any = ({ $axios, store, $config: { apiKey } }: any) => {
+const accessor: any = ({ $axios, $config, store }: any) => {
   initializeAxios($axios)
 
   $axios.onRequest((config: any) => {
-    config.headers.common.Authorization = [apiKey, store.getters.getToken].filter(Boolean).join('&');
+    config.headers.common.Authorization = [$config.apiKey, store.getters.getToken]
+      .filter(Boolean)
+      .join('&')
   })
 
   $axios.onError((error: any) => {

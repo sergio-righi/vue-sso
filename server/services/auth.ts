@@ -4,7 +4,7 @@ import passport from 'passport';
 import { VerifiedCallback } from 'passport-jwt';
 
 import { UserModel } from '@/models';
-import { ConfigUtil, HelperUtil } from '@/utils';
+import { env, helper } from '@/utils';
 
 class AuthService {
 
@@ -24,7 +24,7 @@ class AuthService {
   init() {
     const providersPath = join(__dirname, '..', 'providers');
     fs.readdirSync(providersPath).forEach((file) => {
-      const authFile = HelperUtil.removeExtensionFromFile(file);
+      const authFile = helper.removeExtensionFromFile(file);
       import(join(providersPath, authFile));
     });
   };
@@ -35,9 +35,9 @@ class AuthService {
 
   getConfigByProviderName(providerName: string) {
     return {
-      clientID: ConfigUtil.get(`authentication.${providerName}.clientID` as any),
-      clientSecret: ConfigUtil.get(`authentication.${providerName}.clientSecret` as any),
-      scope: ConfigUtil.get(`authentication.${providerName}.scope` as any),
+      clientID: env.get(`authentication.${providerName}.clientID` as any),
+      clientSecret: env.get(`authentication.${providerName}.clientSecret` as any),
+      scope: env.get(`authentication.${providerName}.scope` as any),
       callbackURL: this._getAuthCallbackUrl(providerName),
     };
   };
@@ -69,7 +69,7 @@ class AuthService {
   }
 
   _getAuthCallbackUrl(providerName: string) {
-    return `${ConfigUtil.get('http.host')}:${ConfigUtil.get('http.port')}/auth/${providerName}/callback`;
+    return `${env.get('http.host')}:${env.get('http.port')}/auth/${providerName}/callback`;
   }
 
   /**

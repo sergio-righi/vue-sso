@@ -22,7 +22,7 @@
           />
         </gv-col>
         <gv-col>
-          <gv-button submit primary stretch :disabled="hasError">
+          <gv-button submit primary stretch :disabled="hasError" :process="isProcessing">
             {{ $t('action.sign_up') }}
           </gv-button>
         </gv-col>
@@ -59,6 +59,7 @@ export default {
       user: {
         verified: false,
       },
+      isProcessing: false,
       invalidPassword: false,
     }
   },
@@ -74,15 +75,17 @@ export default {
     async onSubmit() {
       if (this.hasError) return
       try {
+        this.isProcessing = true
         const response = await this.$service.auth.register(this.user)
         if (response) {
           this.$service.token.insertWithCode(response._id)
           this.$service.mail.verificationCode(response.name, response.email)
-          this.redirectToLogin(response.email)
+          this.redirectToAuthorization()
         } else {
           this.redirectToLogin(this.user.email)
         }
       } catch (err) {
+        this.isProcessing = false
         this.$service.auth.feedback(this.$t('message.feedback.error'))
       }
     },
@@ -94,6 +97,9 @@ export default {
     },
     redirectToLogin(email) {
       this.$router.push(this.$resolve.login(email, this.callback))
+    },
+    redirectToAuthorization() {
+      this.$router.push(this.$resolve.authorization(this.callback))
     },
   },
 }

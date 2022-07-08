@@ -1,5 +1,5 @@
 export default () => ({
-  user: null,
+  sso: null,
   token: null,
   feedback: null,
   callback: null,

@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-import { TokenUtil } from "@/utils"
+import { token } from "@/utils"
 import { TokenModel, UserModel } from "@/models"
 
 class TokenService {
@@ -33,7 +33,7 @@ class TokenService {
     try {
       const { code } = document
       // null code means that the token must contain a code otherwise a number (token) is added
-      const param = code === null ? { code: TokenUtil.generateCode() } : { number: TokenUtil.generateNumber() }
+      const param = code === null ? { code: token.generateCode() } : { number: token.generateNumber() }
 
       response = await TokenModel.create({ ...document, ...param })
       await session.commitTransaction()

@@ -1,6 +1,6 @@
 import { decode, sign, verify } from 'jsonwebtoken';
-import { default as ConfigUtil } from './env';
-import { default as CryptoUtil } from './crypto';
+import { default as env } from './env';
+import { default as crypto } from './crypto';
 
 export enum TokenType {
   ACCESS_TOKEN = 'access_token',
@@ -10,13 +10,13 @@ export enum TokenType {
 type JWT = { exp: number; type: TokenType; sub: string };
 
 const generateToken = (userId: string, type: TokenType) => {
-  const audience = ConfigUtil.get('authentication.token.audience');
-  const issuer = ConfigUtil.get('authentication.token.issuer');
-  const secret = ConfigUtil.get('authentication.token.secret');
+  const audience = env.get('authentication.token.audience');
+  const issuer = env.get('authentication.token.issuer');
+  const secret = env.get('authorization.secret');
   const expiresIn =
     type === TokenType.ACCESS_TOKEN
-      ? ConfigUtil.get('authentication.token.expiresIn')
-      : ConfigUtil.get('authentication.refreshToken.expiresIn');
+      ? env.get('authentication.token.expiresIn')
+      : env.get('authentication.refreshToken.expiresIn');
 
   const token = sign({ type }, secret, {
     expiresIn,
@@ -26,7 +26,7 @@ const generateToken = (userId: string, type: TokenType) => {
   });
 
   return {
-    token: CryptoUtil.encrypt(token),
+    token: crypto.encrypt(token),
     expiration: (decode(token) as JWT).exp * 1000,
   };
 };
@@ -41,12 +41,12 @@ export default {
   },
 
   getTokenType: (token: string): TokenType => {
-    return (verify(token, ConfigUtil.get('authentication.token.secret')) as JWT).type;
+    return (verify(token, env.get('authorization.secret')) as JWT).type;
   },
 
   parseTokenAndGetUserId: (token: string): string => {
-    const decryptedToken = CryptoUtil.decrypt(token);
-    const decoded = verify(decryptedToken, ConfigUtil.get('authentication.token.secret')) as JWT;
+    const decryptedToken = crypto.decrypt(token);
+    const decoded = verify(decryptedToken, env.get('authorization.secret')) as JWT;
     return decoded.sub || '';
   }
 }

@@ -1,22 +1,14 @@
-import Cookies from 'js-cookie'
+import SecureLS from 'secure-ls'
 import VuexPersistence from 'vuex-persist'
 
-export default ({ store, $config: { cookieKey } }: any) => {
+export default ({ store, $config }: any) => {
+  const ls = new SecureLS({ isCompression: false })
   new VuexPersistence({
-    key: cookieKey,
-    storage: navigator.cookieEnabled
-      ? ({
-          getItem: (key: any) => {
-            const value = Cookies.get(key)
-            return value ? JSON.parse(String(value)) : null
-          },
-          setItem: (key: any, value: any): any =>
-            Cookies.set(key, JSON.stringify(value), {
-              expires: 3,
-              secure: true,
-            }),
-          removeItem: (key: any) => Cookies.remove(key),
-        } as any)
-      : window.sessionStorage,
+    key: $config.vuexKey,
+    storage: {
+      getItem: (key: string) => ls.get(key),
+      setItem: (key: string, value: any) => ls.set(key, value),
+      removeItem: (key: string) => ls.remove(key),
+    } as any,
   }).plugin(store)
 }

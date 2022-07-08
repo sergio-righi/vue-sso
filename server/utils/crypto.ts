@@ -1,25 +1,31 @@
-import { default as ConfigUtil } from './env';
-import { createCipheriv, createDecipheriv, scryptSync } from 'crypto';
+import CryptoJS from 'crypto-js'
 
-const secret = ConfigUtil.get('authentication.token.secret');
-const algorithm = 'aes-192-cbc';
+import { default as env } from './env'
 
-const key = scryptSync(secret, 'salt', 24);
-const iv = Buffer.alloc(16, 0);
+const secret = env.get('authorization.secret')
+const iv = env.get('authorization.iv')
 
 export default {
-
   encrypt: (value: string) => {
-    const cipher = createCipheriv(algorithm, key, iv);
-    let encrypted = cipher.update(value, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return encrypted;
+    const cipher = CryptoJS.AES.encrypt(value, CryptoJS.enc.Utf8.parse(secret), {
+      iv: CryptoJS.enc.Utf8.parse(iv),
+      mode: CryptoJS.mode.CBC,
+    })
+
+    return cipher.toString()
   },
 
   decrypt: (value: string) => {
-    const decipher = createDecipheriv(algorithm, key, iv);
-    let decrypted = decipher.update(value, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
-  }
+    const cipher = CryptoJS.AES.decrypt(value, CryptoJS.enc.Utf8.parse(secret), {
+      iv: CryptoJS.enc.Utf8.parse(iv),
+      mode: CryptoJS.mode.CBC,
+    })
+
+    return CryptoJS.enc.Utf8.stringify(cipher).toString()
+  },
+
+  hash: (value: string) => {
+    const hash = CryptoJS.SHA256(secret + value)
+    return hash.toString(CryptoJS.enc.Hex)
+  },
 }

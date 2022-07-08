@@ -1,12 +1,15 @@
 import { TokenModel } from '@/models'
+import Cookies from 'js-cookie'
 
 class TokenService {
   private readonly $store: any
   private readonly $axios: any
+  private readonly $config: any
 
   constructor(context: any) {
     this.$store = context.store
     this.$axios = context.$axios
+    this.$config = context.$config
   }
 
   async insertWithCode(userId: string) {
@@ -21,11 +24,15 @@ class TokenService {
   }
 
   async grant(usedId: string, code: string) {
-    return this._processResponse(await this.$axios.patch('/token/grant/' + usedId, { code }))
+    return this._processResponse(
+      await this.$axios.patch('/token/grant/' + usedId, { code })
+    )
   }
 
   async revoke(userId: string) {
-    return this._processResponse(await this.$axios.patch('/token/revoke/' + userId))
+    return this._processResponse(
+      await this.$axios.patch('/token/revoke/' + userId)
+    )
   }
 
   async reset(number: string, password: string) {
@@ -34,10 +41,10 @@ class TokenService {
 
   _processResponse(response: any) {
     if (response.data) {
-      this.$store.dispatch('setUser', response.data);
-      return response.data;
+      this.$store.dispatch('setUser', { user: response.data, key: this.$config.vuexKey})
+      return response.data
     }
-    return null;
+    return null
   }
 }
 

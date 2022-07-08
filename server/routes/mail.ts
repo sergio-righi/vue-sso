@@ -1,13 +1,13 @@
 import express from 'express'
 import { MailController } from '@/controllers'
-import { AuthMiddleware } from '@/middlewares'
+import { auth } from '@/middlewares'
 
 const router = express.Router()
 
-router.post('/verification-code', AuthMiddleware, (req, res) =>
+router.post('/verification-code', auth, (req, res) =>
   MailController.verificationCode(req, res)
 )
-router.post('/forget-password', AuthMiddleware, (req, res) =>
+router.post('/forget-password', auth, (req, res) =>
   MailController.forgetPassword(req, res)
 )
 

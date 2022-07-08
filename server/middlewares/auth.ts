@@ -1,4 +1,4 @@
-import { ConfigUtil, JWTUtil } from '@/utils'
+import { env, crypto, jwt } from '@/utils'
 
 export default (req: any, res: any, next: any) => {
   try {
@@ -13,7 +13,7 @@ export default (req: any, res: any, next: any) => {
     if (authorization[1]) {
       let decodedToken: any
       try {
-        decodedToken = JWTUtil.generateAccessToken(authorization[1])
+        decodedToken = jwt.generateAccessToken(authorization[1])
       } catch (err) {
         const error: any = new Error('Authentication failed.')
         error.statusCode = 500
@@ -28,11 +28,15 @@ export default (req: any, res: any, next: any) => {
     }
 
     if (authorization[0]) {
-      const secretKey = ConfigUtil.get('api')
-      if (authorization[0] === secretKey) next()
+      const secretKey = env.get('api')
+      if (crypto.hash(authorization[0]) === secretKey) next()
+      else {
+        const error: any = new Error('Not authenticated.')
+        error.statusCode = 401
+        throw error
+      }
     }
   } catch (err) {
-    console.log(err)
     err === 401 ? res.status(401) : res.end()
   }
 }

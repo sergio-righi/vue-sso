@@ -4,7 +4,7 @@ import { Strategy as JwtStrategy, VerifiedCallback } from 'passport-jwt';
 
 import { UserModel } from '@/models';
 import { TokenType } from "@/utils/jwt";
-import { ConfigUtil, CryptoUtil, JWTUtil } from '@/utils';
+import { env, crypto, jwt } from '@/utils';
 
 passport.use(
   new JwtStrategy(
@@ -16,8 +16,8 @@ passport.use(
           }
 
           const tokenFromHeader = req.headers.authorization.replace('Bearer ', '').trim();
-          const decryptedToken = CryptoUtil.decrypt(tokenFromHeader);
-          const tokenType = JWTUtil.getTokenType(decryptedToken);
+          const decryptedToken = crypto.decrypt(tokenFromHeader);
+          const tokenType = jwt.getTokenType(decryptedToken);
 
           if (tokenType !== TokenType.ACCESS_TOKEN) {
             throw new Error('wrong token type provided');
@@ -29,9 +29,9 @@ passport.use(
           return null;
         }
       },
-      secretOrKey: ConfigUtil.get('authentication.token.secret'),
-      issuer: ConfigUtil.get('authentication.token.issuer'),
-      audience: ConfigUtil.get('authentication.token.audience'),
+      secretOrKey: env.get('authorization.secret'),
+      issuer: env.get('authentication.token.issuer'),
+      audience: env.get('authentication.token.audience'),
       passReqToCallback: true,
     },
     (req: any, payload: any, done: VerifiedCallback) => {

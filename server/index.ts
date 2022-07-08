@@ -1,6 +1,6 @@
 import app from './app';
-import { ConfigUtil } from "./utils";
+import { env } from "./utils";
 
-const PORT = ConfigUtil.get('http.port');
+const PORT = env.get('http.port');
 
 app.listen(PORT, () => console.log(`server running at ${PORT}`))

@@ -1,13 +1,13 @@
 import nodemailer from "nodemailer";
 import { OAuth2Client } from 'google-auth-library';
 
-import { default as ConfigUtil } from './env';
+import { default as env } from './env';
 
 const params = {
-  user: String(ConfigUtil.get('mail.gmail.account')),
-  clientId: String(ConfigUtil.get('mail.gmail.clientID')),
-  clientSecret: String(ConfigUtil.get('mail.gmail.clientSecret')),
-  refreshToken: String(ConfigUtil.get('mail.gmail.refreshToken')),
+  user: String(env.get('mail.gmail.account')),
+  clientId: String(env.get('mail.gmail.clientID')),
+  clientSecret: String(env.get('mail.gmail.clientSecret')),
+  refreshToken: String(env.get('mail.gmail.refreshToken')),
 }
 
 const oauth2Client = new OAuth2Client(

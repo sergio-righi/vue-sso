@@ -11,7 +11,7 @@
           />
         </gv-col>
         <gv-col>
-          <gv-button submit primary stretch>
+          <gv-button submit primary stretch :process="isProcessing">
             {{ $t('action.continue') }}
           </gv-button>
         </gv-col>
@@ -45,7 +45,10 @@ export default {
   },
   middleware: ['auth', 'validate'],
   data() {
-    return { code: null }
+    return {
+      code: null,
+      isProcessing: false,
+    }
   },
   computed: {
     user() {
@@ -57,6 +60,7 @@ export default {
   },
   methods: {
     async onSubmit() {
+      this.isProcessing = true
       try {
         const response = await this.$service.token.grant(
           this.user._id,
@@ -67,11 +71,13 @@ export default {
           this.$service.auth.callback(null)
         } else {
           this.code = null
+          this.isProcessing = false
           this.$service.auth.feedback(
             this.$t('message.authorization.not_match')
           )
         }
       } catch (err) {
+        this.isProcessing = false
         this.$service.auth.feedback(this.$t('message.feedback.error'))
       }
     },
