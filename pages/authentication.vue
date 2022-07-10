@@ -9,7 +9,7 @@
         width="3"
       />
       <gv-space x lg left>
-        <span>{{ message }}</span>
+        <span class="a-center">{{ message }}</span>
       </gv-space>
     </gv-flexbox>
   </div>
@@ -42,6 +42,7 @@ export default {
         this.message = this.$t('message.authentication.not_finished')
       }
     } catch (err) {
+      console.log(err)
       this.isProcessing = false
       this.message = this.$t('message.authentication.error')
     }

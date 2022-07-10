@@ -1,6 +1,7 @@
+import { Request, Response } from 'express'
 import { env, crypto, jwt } from '@/utils'
 
-export default (req: any, res: any, next: any) => {
+export default (req: Request, res: Response, next: any) => {
   try {
     const authorization = req.headers.authorization.split('&')
 

@@ -3,13 +3,11 @@ import { Request, Response } from 'express'
 import { env, jwt, crypto } from '@/utils'
 import { UserModel } from '@/models'
 import { AuthService } from '@/services'
+import { BaseController } from './base.controller'
 
-const handleError = (res: Response, err: Error) => {
-  res.status(500)
-}
-
-class AuthController {
+class AuthController extends BaseController {
   constructor() {
+    super()
     AuthService.init()
   }
 
@@ -28,7 +26,7 @@ class AuthController {
         res.status(200).json(null)
       }
     } catch (err) {
-      handleError(res, err)
+      this.handleError(res, err)
     }
   }
 
@@ -55,7 +53,7 @@ class AuthController {
         res.status(200).json(null)
       }
     } catch (err) {
-      handleError(res, err)
+      this.handleError(res, err)
     }
   }
 
@@ -66,7 +64,8 @@ class AuthController {
       const userId = jwt.parseTokenAndGetUserId(tokenEncrypted)
       this.generateTokensAndAuthenticateUser(res, String(userId))
     } catch (err) {
-      handleError(res, err)
+      console.log(err)
+      this.handleError(res, err)
     }
   }
 
@@ -74,18 +73,16 @@ class AuthController {
     const user = await UserModel.findById(userId).select('-password')
     const { token: access_token, expiration: token_expiration } =
       await jwt.generateAccessToken(userId)
-    // const { token: refreshToken } = jwt.generateRefreshToken(userId);
-    // res.cookie('refresh_token', refreshToken, { httpOnly: true });
+    const { token: refreshToken } = jwt.generateRefreshToken(userId)
+    res.cookie('refresh_token', refreshToken, { httpOnly: false, secure: false })
     res.status(200).json({ access_token, token_expiration, user })
   }
 
   async generateUserTokenAndRedirect(req: any, res: any) {
-    const { token } = jwt.generateRefreshToken(
-      req.currentUser?._id.toString()
-    )
+    const { token } = jwt.generateRefreshToken(req.currentUser?._id.toString())
     const fronendUrl = env.get('url.frontend')
     const successRedirect = `${fronendUrl}/authentication?token=${token}`
-    // res.cookie('refresh_token', token, { httpOnly: true });
+    res.cookie('refresh_token', token, { httpOnly: false, secure: false })
     res.redirect(successRedirect)
   }
 

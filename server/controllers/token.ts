@@ -1,13 +1,9 @@
 import { Request, Response } from 'express'
 
-import { TokenModel } from "@/models";
 import { TokenService } from "@/services";
+import { BaseController } from './base.controller';
 
-const handleError = (res: Response, _: Error) => {
-  res.status(500)
-}
-
-class TokenController {
+class TokenController extends BaseController {
 
   async create(req: Request, res: Response) {
     const response = await TokenService.create(req.body)

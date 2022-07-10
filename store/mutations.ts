@@ -6,9 +6,10 @@ export default {
       Cookies.set(key, JSON.stringify(user), {
         secure: true,
         expires: 3,
+        domain: 'sergiorighi.com',
       })
     } else {
-      Cookies.remove(key)
+      Cookies.remove(key, { domain: 'sergiorighi.com' })
     }
     state.sso = user
   },

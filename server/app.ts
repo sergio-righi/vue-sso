@@ -5,6 +5,7 @@ import passport from 'passport'
 import session from 'express-session'
 import compression from 'compression'
 import MongoStore from 'connect-mongo'
+import cookieParser from 'cookie-parser'
 
 import { env } from './utils'
 import { AuthRoute, MailRoute, TokenRoute } from './routes'
@@ -42,6 +43,7 @@ class App {
   }
 
   setConfiguration() {
+    this.express.use(cookieParser())
     this.express.use(express.json({ limit: '10mb' }))
     this.express.use(
       cors({
