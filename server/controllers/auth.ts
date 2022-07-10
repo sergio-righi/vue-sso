@@ -64,7 +64,6 @@ class AuthController extends BaseController {
       const userId = jwt.parseTokenAndGetUserId(tokenEncrypted)
       this.generateTokensAndAuthenticateUser(res, String(userId))
     } catch (err) {
-      console.log(err)
       this.handleError(res, err)
     }
   }
